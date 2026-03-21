@@ -1,0 +1,78 @@
+import { useEffect, useState } from 'react'
+
+const AGENTS = [
+  {
+    name: 'NIGHTHAWK',
+    role: 'Infiltration',
+    desc: 'Your ghost. Surveillance, entry, physical presence on the ground. When something needs to happen quietly in a place you shouldn\'t be, NIGHTHAWK goes in.',
+  },
+  {
+    name: 'CIPHER',
+    role: 'Intelligence',
+    desc: 'Your analyst and field handler. Dead drops, document retrieval, human contact. CIPHER turns information into leverage.',
+  },
+  {
+    name: 'GHOST',
+    role: 'Elimination',
+    desc: 'Your last resort. When a threat cannot be avoided or outmaneuvered, GHOST removes it. Precise, costly, and not without consequences.',
+  },
+]
+
+export default function IntroScreen({ onStart }) {
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setVisible(true), 80)
+    return () => clearTimeout(t)
+  }, [])
+
+  return (
+    <div className={`full-screen intro-screen fade-up ${visible ? 'visible' : ''}`}>
+      <div className="intro-card">
+        <div className="end-classification">OPERATION SHADOW BROKER — EYES ONLY</div>
+
+        <h1 className="intro-title">SHADOW BROKER</h1>
+        <p className="intro-date">Vienna Station, October 1977</p>
+
+        <p className="intro-body">
+          A Soviet nuclear physicist wants to defect. His knowledge is invaluable.
+          The KGB will stop at nothing to bring him back — or silence him.
+          You are the handler. Every decision is yours.
+        </p>
+
+        <div className="intro-mechanics">
+          <div className="mechanic">
+            <span className="mechanic-label">FUNDS</span>
+            <span className="mechanic-desc">Operations cost money. Run dry and your options narrow.</span>
+          </div>
+          <div className="mechanic">
+            <span className="mechanic-label">HEAT</span>
+            <span className="mechanic-desc">KGB attention. Reaches 100 and the operation is burned.</span>
+          </div>
+          <div className="mechanic">
+            <span className="mechanic-label">AGENTS</span>
+            <span className="mechanic-desc">Lose all three and the extraction cannot proceed.</span>
+          </div>
+        </div>
+
+        <div className="intro-agents">
+          <div className="intro-agents-label">YOUR FIELD ASSETS</div>
+          {AGENTS.map(agent => (
+            <div key={agent.name} className="intro-agent">
+              <div className="intro-agent-header">
+                <span className="intro-agent-dot" />
+                <span className="intro-agent-name">{agent.name}</span>
+                <span className="intro-agent-role">{agent.role}</span>
+              </div>
+              <p className="intro-agent-desc">{agent.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        <button className="begin-btn" onClick={onStart}>
+          Begin Operation
+        </button>
+      </div>
+    </div>
+  )
+}
