@@ -655,12 +655,24 @@ html, body {
 
 @media (max-width: 600px) {
   .header-inner {
-    gap: 0.75rem;
-    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
   }
 
   .game-title {
-    font-size: 0.65rem;
+    display: none;
+  }
+
+  .header-center {
+    gap: 0.75rem;
+  }
+
+  .heat-stat {
+    max-width: 120px;
+  }
+
+  .header-agents {
+    gap: 0.5rem;
   }
 
   .hagent-name {
