@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react'
 import { computeScore } from '../utils/scoring'
 
+const GRADE_LABELS = { S: 'Exceptional', A: 'Excellent', B: 'Good', C: 'Satisfactory', D: 'Poor' }
+const GRADES = [
+  { g: 'S', label: 'Exceptional',  range: '800–1000' },
+  { g: 'A', label: 'Excellent',    range: '650–799' },
+  { g: 'B', label: 'Good',         range: '500–649' },
+  { g: 'C', label: 'Satisfactory', range: '350–499' },
+  { g: 'D', label: 'Poor',         range: '< 350' },
+]
+
 export default function LoseScreen({ state, reason, onRestart }) {
   const [visible, setVisible] = useState(false)
   const [score, setScore] = useState(null)
@@ -24,7 +33,26 @@ export default function LoseScreen({ state, reason, onRestart }) {
           <div className="partial-score">
             <div className="partial-score-label">PARTIAL SCORE</div>
             <div className="partial-score-value">{score.total.toLocaleString()}</div>
-            <div className={`partial-score-grade grade-${score.grade}`}>{score.grade}</div>
+            <div className="grade-info-wrap grade-info-wrap--small">
+              <div className={`partial-score-grade grade-${score.grade}`}>{score.grade}</div>
+              <span className="grade-hint">ⓘ</span>
+              <div className="grade-tooltip">
+                <div className="gt-current">
+                  <span className={`gt-letter grade-${score.grade}`}>{score.grade}</span>
+                  <span className="gt-label">{GRADE_LABELS[score.grade]}</span>
+                </div>
+                <div className="gt-divider" />
+                <div className="gt-scale">
+                  {GRADES.map(({ g, label, range }) => (
+                    <div key={g} className={`gt-row ${g === score.grade ? 'gt-row-active' : ''}`}>
+                      <span className={`gt-g grade-${g}`}>{g}</span>
+                      <span className="gt-gl">{label}</span>
+                      <span className="gt-range">{range}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

@@ -846,6 +846,108 @@ html, body {
   flex-shrink: 0;
 }
 
+/* ── Grade Tooltip ─────────────────────────────────────── */
+
+.grade-info-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: default;
+}
+
+.grade-hint {
+  font-size: 0.7rem;
+  color: var(--text-faint);
+  line-height: 1;
+  margin-top: -0.75rem;
+  transition: color 0.15s ease;
+}
+
+.grade-info-wrap:hover .grade-hint {
+  color: var(--accent);
+}
+
+.grade-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  background: var(--bg-header);
+  border: 1px solid var(--border-light);
+  border-radius: 2px;
+  padding: 0.75rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+  z-index: 10;
+  text-align: left;
+}
+
+.grade-info-wrap:hover .grade-tooltip {
+  opacity: 1;
+}
+
+.gt-current {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.gt-letter {
+  font-size: 1.4rem;
+  font-weight: bold;
+}
+
+.gt-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+
+.gt-divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 0.6rem;
+}
+
+.gt-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.gt-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  opacity: 0.4;
+}
+
+.gt-row-active {
+  opacity: 1;
+}
+
+.gt-g {
+  font-weight: bold;
+  width: 0.8rem;
+  flex-shrink: 0;
+}
+
+.gt-gl {
+  flex: 1;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.gt-range {
+  color: var(--text-faint);
+  font-variant-numeric: tabular-nums;
+}
+
 /* ── Leaderboard ───────────────────────────────────────── */
 
 .leaderboard {
