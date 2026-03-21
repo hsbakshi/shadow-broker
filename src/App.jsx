@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { scenarios } from './scenarios'
 import Header from './components/Header'
 import ScenarioCard from './components/ScenarioCard'
@@ -55,6 +55,10 @@ function checkLoseCondition(state) {
 
 export default function App() {
   const [state, setState] = useState(INITIAL_STATE)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [state.scenarioId, state.phase])
 
   const handleChoice = useCallback((choiceIndex) => {
     const scenario = scenarios[state.scenarioId]
