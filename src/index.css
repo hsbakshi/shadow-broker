@@ -651,6 +651,115 @@ html, body {
   border-color: var(--accent-dim);
 }
 
+/* ── Abort / Save-Resume ───────────────────────────────── */
+
+.abort-btn {
+  background: transparent;
+  border: 1px solid #3d2020;
+  color: var(--text-faint);
+  font-family: var(--font);
+  font-size: 0.55rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  border-radius: 2px;
+  flex-shrink: 0;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.abort-btn:hover {
+  color: #ef4444;
+  border-color: #7f1d1d;
+}
+
+.abort-confirm-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 2.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.abort-confirm-title {
+  font-size: 1.6rem;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.abort-confirm-sub {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.abort-exit-btn {
+  background: transparent;
+  border: 1px solid #3d2020;
+  color: #a16060;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  padding: 0.8rem 2rem;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.abort-exit-btn:hover {
+  background: rgba(239, 68, 68, 0.06);
+  color: #ef4444;
+  border-color: #7f1d1d;
+}
+
+.resume-btn {
+  margin-bottom: 0.75rem;
+  border-color: var(--accent);
+}
+
+.new-game-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.new-game-confirm-text {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: #a16060;
+  line-height: 1.6;
+  padding: 0.75rem 1rem;
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 2px solid #7f1d1d;
+}
+
+.new-game-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.new-game-confirm-yes {
+  border-color: #3d2020;
+  color: #a16060;
+}
+
+.new-game-confirm-yes:hover {
+  background: rgba(239, 68, 68, 0.06);
+  border-color: #7f1d1d;
+  color: #ef4444;
+}
+
 /* ── Responsive ────────────────────────────────────────── */
 
 @media (max-width: 600px) {

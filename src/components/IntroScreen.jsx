@@ -18,13 +18,22 @@ const AGENTS = [
   },
 ]
 
-export default function IntroScreen({ onStart }) {
+export default function IntroScreen({ onStart, onResume, hasSave }) {
   const [visible, setVisible] = useState(false)
+  const [confirmNew, setConfirmNew] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80)
     return () => clearTimeout(t)
   }, [])
+
+  function handleNewGameClick() {
+    if (hasSave) {
+      setConfirmNew(true)
+    } else {
+      onStart()
+    }
+  }
 
   return (
     <div className={`full-screen intro-screen fade-up ${visible ? 'visible' : ''}`}>
@@ -69,9 +78,31 @@ export default function IntroScreen({ onStart }) {
           ))}
         </div>
 
-        <button className="begin-btn" onClick={onStart}>
-          Begin Operation
-        </button>
+        {hasSave && (
+          <button className="begin-btn resume-btn" onClick={onResume}>
+            Resume Operation
+          </button>
+        )}
+
+        {confirmNew ? (
+          <div className="new-game-confirm">
+            <p className="new-game-confirm-text">
+              You have a saved operation in progress. Starting new will erase it.
+            </p>
+            <div className="new-game-confirm-actions">
+              <button className="begin-btn new-game-confirm-yes" onClick={onStart}>
+                Start New
+              </button>
+              <button className="restart-btn" onClick={() => setConfirmNew(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button className="begin-btn" onClick={handleNewGameClick}>
+            {hasSave ? 'Begin New Operation' : 'Begin Operation'}
+          </button>
+        )}
       </div>
     </div>
   )

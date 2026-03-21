@@ -1,10 +1,12 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { scenarios } from './scenarios'
 import Header from './components/Header'
 import ScenarioCard from './components/ScenarioCard'
 import WinScreen from './components/WinScreen'
 import LoseScreen from './components/LoseScreen'
 import IntroScreen from './components/IntroScreen'
+
+const SAVE_KEY = 'shadow-broker-save'
 
 const INITIAL_STATE = {
   funds: 500000,
@@ -16,10 +18,11 @@ const INITIAL_STATE = {
   },
   volkovAlive: true,
   scenarioId: 's1',
-  phase: 'intro', // intro | playing | outcome | win | lose
+  phase: 'intro', // intro | playing | outcome | win | lose | abort-confirm
   pendingOutcome: null, // { tier, text, effects, next }
   loseReason: null,
   history: [], // track visited scenario ids for stats
+  preAbortPhase: null, // stores phase before abort-confirm
 }
 
 function applyEffects(state, effects) {
@@ -53,8 +56,33 @@ function checkLoseCondition(state) {
   return null
 }
 
+function loadSave() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function clearSave() {
+  localStorage.removeItem(SAVE_KEY)
+}
+
 export default function App() {
   const [state, setState] = useState(INITIAL_STATE)
+  const [hasSave, setHasSave] = useState(() => !!localStorage.getItem(SAVE_KEY))
+
+  // Auto-save on every state change (skip intro/abort-confirm phases)
+  useEffect(() => {
+    if (state.phase !== 'intro' && state.phase !== 'abort-confirm') {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state))
+    }
+  }, [state])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [state.scenarioId, state.phase])
 
   const handleChoice = useCallback((choiceIndex) => {
     const scenario = scenarios[state.scenarioId]
@@ -109,15 +137,72 @@ export default function App() {
   }, [state])
 
   const handleRestart = useCallback(() => {
+    clearSave()
+    setHasSave(false)
     setState(INITIAL_STATE)
   }, [])
 
   const handleStart = useCallback(() => {
-    setState(s => ({ ...s, phase: 'playing' }))
+    clearSave()
+    setHasSave(false)
+    setState({ ...INITIAL_STATE, phase: 'playing' })
   }, [])
 
+  const handleResume = useCallback(() => {
+    const saved = loadSave()
+    if (saved) setState(saved)
+  }, [])
+
+  const handleAbort = useCallback(() => {
+    setState(s => ({ ...s, preAbortPhase: s.phase, phase: 'abort-confirm' }))
+  }, [])
+
+  const handleAbortCancel = useCallback(() => {
+    setState(s => ({ ...s, phase: s.preAbortPhase, preAbortPhase: null }))
+  }, [])
+
+  const handleAbortConfirm = useCallback(() => {
+    // Save remains in localStorage so player can resume; just go back to intro
+    setHasSave(true)
+    setState(INITIAL_STATE)
+  }, [])
+
+  // Win and lose clear the save
+  useEffect(() => {
+    if (state.phase === 'win' || state.phase === 'lose') {
+      clearSave()
+      setHasSave(false)
+    }
+  }, [state.phase])
+
   if (state.phase === 'intro') {
-    return <IntroScreen onStart={handleStart} />
+    return (
+      <IntroScreen
+        onStart={handleStart}
+        onResume={handleResume}
+        hasSave={hasSave}
+      />
+    )
+  }
+
+  if (state.phase === 'abort-confirm') {
+    return (
+      <div className="full-screen">
+        <div className="abort-confirm-card">
+          <div className="end-classification">OPERATION SHADOW BROKER</div>
+          <p className="abort-confirm-title">ABORT MISSION?</p>
+          <p className="abort-confirm-sub">
+            Your progress has been saved. You can resume at any time.
+          </p>
+          <button className="continue-btn" onClick={handleAbortCancel}>
+            Resume Mission
+          </button>
+          <button className="abort-exit-btn" onClick={handleAbortConfirm}>
+            Exit to Briefing
+          </button>
+        </div>
+      </div>
+    )
   }
 
   if (state.phase === 'win') {
@@ -136,6 +221,8 @@ export default function App() {
         funds={state.funds}
         heat={state.heat}
         agents={state.agents}
+        phase={state.phase}
+        onAbort={handleAbort}
       />
       <main className="main-content">
         <ScenarioCard
