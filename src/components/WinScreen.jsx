@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react'
+import { computeScore, saveScore } from '../utils/scoring'
 
 export default function WinScreen({ state, onRestart }) {
   const [visible, setVisible] = useState(false)
+  const [score, setScore] = useState(null)
+  const [leaderboard, setLeaderboard] = useState([])
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80)
+    const s = computeScore(state)
+    const board = saveScore(s)
+    setScore(s)
+    setLeaderboard(board)
     return () => clearTimeout(t)
   }, [])
 
@@ -20,22 +27,20 @@ export default function WinScreen({ state, onRestart }) {
           All field personnel have cleared the area of operations.
         </p>
 
-        <div className="end-stats">
-          <div className="end-stat">
-            <span className="end-stat-label">REMAINING FUNDS</span>
-            <span className="end-stat-value">${state.funds.toLocaleString()}</span>
-          </div>
-          <div className="end-stat">
-            <span className="end-stat-label">FINAL HEAT LEVEL</span>
-            <span className={`end-stat-value ${state.heat >= 70 ? 'heat-red' : state.heat >= 40 ? 'heat-amber' : 'heat-green'}`}>
-              {state.heat}
-            </span>
-          </div>
-          <div className="end-stat">
-            <span className="end-stat-label">SCENARIOS NAVIGATED</span>
-            <span className="end-stat-value">{state.history.length}</span>
-          </div>
-        </div>
+        {score && (
+          <>
+            <div className="score-grade-block">
+              <div className={`score-grade grade-${score.grade}`}>{score.grade}</div>
+              <div className="score-total">{score.total.toLocaleString()} <span className="score-pts-label">pts</span></div>
+            </div>
+
+            <div className="score-bars">
+              <ScoreBar label="Funds Remaining" value={score.breakdown.funds} max={400} color="green" />
+              <ScoreBar label="Heat Control" value={score.breakdown.heat} max={300} color="amber" />
+              <ScoreBar label="Agent Integrity" value={score.breakdown.agents} max={300} color="blue" />
+            </div>
+          </>
+        )}
 
         <div className="end-agents">
           {agentStatuses.map(([name, agent]) => (
@@ -48,10 +53,37 @@ export default function WinScreen({ state, onRestart }) {
           ))}
         </div>
 
+        {leaderboard.length > 0 && (
+          <div className="leaderboard">
+            <div className="leaderboard-title">MISSION LOG</div>
+            {leaderboard.map((entry, i) => (
+              <div key={i} className="leaderboard-row">
+                <span className="lb-rank">#{i + 1}</span>
+                <span className={`lb-grade grade-${entry.grade}`}>{entry.grade}</span>
+                <span className="lb-score">{entry.score.toLocaleString()}</span>
+                <span className="lb-date">{entry.date}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         <button className="restart-btn" onClick={onRestart}>
           Run Again
         </button>
       </div>
+    </div>
+  )
+}
+
+function ScoreBar({ label, value, max, color }) {
+  const pct = Math.min(100, Math.round((value / max) * 100))
+  return (
+    <div className="score-bar-row">
+      <div className="score-bar-label">{label}</div>
+      <div className="score-bar-track">
+        <div className={`score-bar-fill sbar-${color}`} style={{ width: `${pct}%` }} />
+      </div>
+      <div className="score-bar-pts">{value}</div>
     </div>
   )
 }

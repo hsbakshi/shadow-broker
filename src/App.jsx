@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { scenarios } from './scenarios'
+import { scenarios } from './data/scenarios'
 import Header from './components/Header'
 import ScenarioCard from './components/ScenarioCard'
 import WinScreen from './components/WinScreen'
@@ -9,7 +9,7 @@ import IntroScreen from './components/IntroScreen'
 const SAVE_KEY = 'shadow-broker-save'
 
 const INITIAL_STATE = {
-  funds: 500000,
+  funds: 400000,
   heat: 15,
   agents: {
     NIGHTHAWK: { role: 'Infiltration', status: 'active' },
@@ -45,6 +45,9 @@ function applyEffects(state, effects) {
 function checkLoseCondition(state) {
   if (state.heat >= 100) {
     return 'Heat reached critical levels. KGB counterintelligence has identified the operation. Assets are burned. VOLKOV is taken back into custody.'
+  }
+  if (state.funds < 0) {
+    return 'Operational funds are exhausted. Without resources to move personnel or acquire materials, the extraction collapses. VOLKOV cannot be reached in time.'
   }
   const allLost = Object.values(state.agents).every(a => a.status === 'lost')
   if (allLost) {
