@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
+import { computeScore } from '../utils/scoring'
 
 export default function LoseScreen({ state, reason, onRestart }) {
   const [visible, setVisible] = useState(false)
+  const [score, setScore] = useState(null)
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80)
+    setScore(computeScore(state))
     return () => clearTimeout(t)
   }, [])
 
@@ -16,6 +19,14 @@ export default function LoseScreen({ state, reason, onRestart }) {
         <div className="end-classification">OPERATION STATUS — COMPROMISED</div>
         <h1 className="end-title lose-title">Operation Terminated</h1>
         <p className="end-reason">{reason}</p>
+
+        {score && (
+          <div className="partial-score">
+            <div className="partial-score-label">PARTIAL SCORE</div>
+            <div className="partial-score-value">{score.total.toLocaleString()}</div>
+            <div className={`partial-score-grade grade-${score.grade}`}>{score.grade}</div>
+          </div>
+        )}
 
         <div className="end-stats">
           <div className="end-stat">
