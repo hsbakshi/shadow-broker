@@ -11,8 +11,9 @@ function heatClass(heat) {
   return 'heat-green'
 }
 
-export default function Header({ funds, heat, agents }) {
+export default function Header({ funds, heat, agents, phase, onAbort }) {
   const hc = heatClass(heat)
+  const showAbort = phase === 'playing' || phase === 'outcome'
 
   return (
     <header className="header">
@@ -46,6 +47,12 @@ export default function Header({ funds, heat, agents }) {
             </div>
           ))}
         </div>
+
+        {showAbort && (
+          <button className="abort-btn" onClick={onAbort} title="Abort mission">
+            ABORT
+          </button>
+        )}
 
       </div>
     </header>
