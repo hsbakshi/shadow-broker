@@ -4,6 +4,7 @@ import Header from './components/Header'
 import ScenarioCard from './components/ScenarioCard'
 import WinScreen from './components/WinScreen'
 import LoseScreen from './components/LoseScreen'
+import IntroScreen from './components/IntroScreen'
 
 const INITIAL_STATE = {
   funds: 500000,
@@ -15,7 +16,7 @@ const INITIAL_STATE = {
   },
   volkovAlive: true,
   scenarioId: 's1',
-  phase: 'playing', // playing | outcome | win | lose
+  phase: 'intro', // intro | playing | outcome | win | lose
   pendingOutcome: null, // { tier, text, effects, next }
   loseReason: null,
   history: [], // track visited scenario ids for stats
@@ -110,6 +111,14 @@ export default function App() {
   const handleRestart = useCallback(() => {
     setState(INITIAL_STATE)
   }, [])
+
+  const handleStart = useCallback(() => {
+    setState(s => ({ ...s, phase: 'playing' }))
+  }, [])
+
+  if (state.phase === 'intro') {
+    return <IntroScreen onStart={handleStart} />
+  }
 
   if (state.phase === 'win') {
     return <WinScreen state={state} onRestart={handleRestart} />
