@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { scenarios } from './data/scenarios'
+import { operations } from './data/operations'
 import Header from './components/Header'
 import ScenarioCard from './components/ScenarioCard'
 import WinScreen from './components/WinScreen'
@@ -32,17 +33,18 @@ function saveProfile(profile) {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profile))
 }
 
+const DEFAULT_OP = operations['shadow-broker']
+
 const INITIAL_STATE = {
-  funds: 400000,
-  heat: 15,
-  agents: {
-    NIGHTHAWK: { role: 'Infiltration', status: 'active' },
-    CIPHER: { role: 'Intelligence', status: 'active' },
-    GHOST: { role: 'Elimination', status: 'active' },
-  },
+  selectedOperationId: 'shadow-broker',
+  funds: DEFAULT_OP.startingFunds,
+  heat: DEFAULT_OP.startingHeat,
+  agents: Object.fromEntries(
+    Object.entries(DEFAULT_OP.agents).map(([name, a]) => [name, { ...a, status: 'active' }])
+  ),
   volkovAlive: true,
-  scenarioId: 's1',
-  phase: 'home', // home | intro | playing | outcome | win | lose | abort-confirm
+  scenarioId: DEFAULT_OP.startScenario,
+  phase: 'home',
   pendingOutcome: null,
   loseReason: null,
   history: [],
@@ -68,17 +70,17 @@ function applyEffects(state, effects) {
 
 function checkLoseCondition(state) {
   if (state.heat >= 100) {
-    return 'Heat reached critical levels. KGB counterintelligence has identified the operation. Assets are burned. VOLKOV is taken back into custody.'
+    return 'Heat reached critical levels. Enemy counterintelligence has identified the operation. Assets are burned. The target is lost.'
   }
   if (state.funds < 0) {
-    return 'Operational funds are exhausted. Without resources to move personnel or acquire materials, the extraction collapses. VOLKOV cannot be reached in time.'
+    return 'Operational funds are exhausted. Without resources to move personnel or acquire materials, the extraction collapses.'
   }
   const allLost = Object.values(state.agents).every(a => a.status === 'lost')
   if (allLost) {
-    return 'All field agents have been lost. Without operatives on the ground, the extraction cannot proceed. VOLKOV disappears back into the Soviet system.'
+    return 'All field agents have been lost. Without operatives on the ground, the extraction cannot proceed.'
   }
   if (!state.volkovAlive) {
-    return 'VOLKOV is dead. The schematics die with him. Operation Shadow Broker is a catastrophic failure.'
+    return 'The asset is dead. The operation is a catastrophic failure.'
   }
   return null
 }
@@ -144,7 +146,6 @@ export default function App() {
     }
     saveProfile(newProfile)
     setProfile(newProfile)
-    // Stay on 'home' phase — profile is now set so HomeScreen renders
   }, [])
 
   const handleChangeProfile = useCallback(() => {
@@ -153,8 +154,9 @@ export default function App() {
     setState(INITIAL_STATE)
   }, [])
 
-  const handleNewOperation = useCallback(() => {
-    setState(s => ({ ...s, phase: 'intro' }))
+  // Called from HomeScreen with the selected operation id
+  const handleNewOperation = useCallback((operationId) => {
+    setState(s => ({ ...s, selectedOperationId: operationId, phase: 'intro' }))
   }, [])
 
   const handleChoice = useCallback((choiceIndex) => {
@@ -215,11 +217,23 @@ export default function App() {
     setState(INITIAL_STATE)
   }, [])
 
+  // Begin operation — initialise game state from selected operation config
   const handleStart = useCallback(() => {
     clearSave()
     setHasSave(false)
-    setState({ ...INITIAL_STATE, phase: 'playing' })
-  }, [])
+    const op = operations[state.selectedOperationId] || DEFAULT_OP
+    setState({
+      ...INITIAL_STATE,
+      selectedOperationId: op.id,
+      phase: 'playing',
+      funds: op.startingFunds,
+      heat: op.startingHeat,
+      scenarioId: op.startScenario,
+      agents: Object.fromEntries(
+        Object.entries(op.agents).map(([name, a]) => [name, { ...a, status: 'active' }])
+      ),
+    })
+  }, [state.selectedOperationId])
 
   const handleResume = useCallback(() => {
     const saved = loadSave()
@@ -257,8 +271,10 @@ export default function App() {
   }
 
   if (state.phase === 'intro') {
+    const op = operations[state.selectedOperationId] || DEFAULT_OP
     return (
       <IntroScreen
+        operation={op}
         onStart={handleStart}
         onResume={handleResume}
         hasSave={hasSave}
@@ -270,7 +286,7 @@ export default function App() {
     return (
       <div className="full-screen">
         <div className="abort-confirm-card">
-          <div className="end-classification">OPERATION SHADOW BROKER</div>
+          <div className="end-classification">OPERATION IN PROGRESS</div>
           <p className="abort-confirm-title">ABORT MISSION?</p>
           <p className="abort-confirm-sub">
             Your progress has been saved. You can resume at any time.

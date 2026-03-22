@@ -508,4 +508,275 @@ export const scenarios = {
       },
     ],
   },
+
+  // ── Operation Cold Front — Korea 1982 ──────────────────
+
+  k1: {
+    id: 'k1',
+    title: 'The Lotus Signal',
+    location: 'Seoul',
+    date: 'April 2, 1982',
+    setup: `ARAKAWA Kenji, a Japanese trade attaché based in Seoul, has passed word through a cutout: a DPRK weapons engineer designated LOTUS claims North Korea is developing a functional nuclear trigger mechanism using Soviet-supplied centrifuge technology. He wants to defect — and he will only cross during the May armistice commission session at Panmunjom. You have six weeks to prepare.`,
+    choices: [
+      {
+        text: 'Send CIPHER to assess ARAKAWA — verify his credibility before committing resources',
+        outcome: {
+          tier: 'clean',
+          text: 'CIPHER meets ARAKAWA at a hotel bar in Itaewon. The attaché is cautious but specific. His account is consistent under questioning and the technical details he relays from LOTUS track with known DPRK procurement patterns. The source is credible.',
+          effects: { heat: 5, funds: -20000 },
+          next: 'k2',
+        },
+      },
+      {
+        text: 'Meet ARAKAWA yourself — faster, and the conversation will go deeper',
+        outcome: {
+          tier: 'messy',
+          text: 'ARAKAWA is responsive and the intelligence is solid. But a DPRK trade mission is in Seoul this week and one of their security staff is photographing foreigners near the hotel. You may have been captured on film.',
+          effects: { heat: 12, funds: -5000 },
+          next: 'k2',
+        },
+      },
+      {
+        text: 'Demand a proof-of-life signal from LOTUS directly before any movement',
+        outcome: {
+          tier: 'clean',
+          text: 'LOTUS passes a fragment of a procurement manifest through ARAKAWA — Soviet centrifuge components requisitioned under a State Council cover designation. The document is genuine. Your window is confirmed.',
+          effects: { heat: 3, funds: -15000 },
+          next: 'k2',
+        },
+      },
+      {
+        text: 'Stand ARAKAWA down — the source chain is too long, wait for a cleaner entry point',
+        outcome: {
+          tier: 'burned',
+          text: 'You decline the approach. ARAKAWA delivers the news to LOTUS, who panics. He attempts to establish contact through an unofficial back-channel — a letter to a distant relative in Seoul. The chain is now unverified and potentially compromised.',
+          effects: { heat: -3, funds: 0 },
+          next: 'k2_hard',
+        },
+      },
+    ],
+  },
+
+  k2: {
+    id: 'k2',
+    title: 'The Document',
+    location: 'Panmunjom / Seoul',
+    date: 'April 9, 1982',
+    setup: `LOTUS has smuggled a fragment of the centrifuge procurement file through the armistice mail system — a materials requisition bearing a DPRK State Council designation. The document is sitting in a UN Command diplomatic bag in the JSA administrative building. Extracting it without alerting South Korean monitors or DPRK observation posts requires careful handling.`,
+    choices: [
+      {
+        text: 'NIGHTHAWK coordinates with a US Army liaison officer to retrieve the bag informally',
+        outcome: {
+          tier: 'clean',
+          text: "NIGHTHAWK calls in a favour with a signals officer at Camp Bonifas. The bag is examined in a back office and the relevant pages photographed. The document is genuine — reactor-grade enrichment specifications. LOTUS knows exactly what he's carrying.",
+          effects: { heat: 5, funds: -30000 },
+          next: 'k3',
+        },
+      },
+      {
+        text: 'GHOST creates a distraction at the JSA perimeter while CIPHER photographs the document in place',
+        outcome: {
+          tier: 'messy',
+          text: 'The distraction works but runs long. CIPHER gets the photographs but a UN Command administrative officer notices the bag has been moved. He files an internal report. Nothing conclusive — but someone in the JSA bureaucracy is now paying attention.',
+          effects: { heat: 12, funds: -15000 },
+          next: 'k3',
+        },
+      },
+    ],
+  },
+
+  k2_hard: {
+    id: 'k2_hard',
+    title: 'Cold Channel',
+    location: 'Seoul',
+    date: 'April 9, 1982',
+    setup: `Standing down ARAKAWA has produced exactly the problem you anticipated. LOTUS, panicking, has attempted contact through an unofficial chain — a message embedded in a cultural exchange letter forwarded by a Seoul-based ethnic Korean academic with ties to the North. The chain is three people long and completely unverified. It could be LOTUS. It could be a Bowibu provocation.`,
+    choices: [
+      {
+        text: 'Activate the chain — reach LOTUS through this route and assess him directly',
+        outcome: {
+          tier: 'burned',
+          text: 'Contact is established. LOTUS is genuine — but two of the three people in the chain have now seen enough to become liabilities. One of them is already on a DIC watch list for separate reasons. The operation begins under unnecessary exposure.',
+          effects: { heat: 15, funds: -25000 },
+          next: 'k3',
+        },
+      },
+      {
+        text: 'Reactivate ARAKAWA on your terms — rebuild the original channel with new protocols',
+        outcome: {
+          tier: 'messy',
+          text: 'ARAKAWA agrees to re-engage but is clearly shaken by the earlier stand-down. He insists on additional cutouts and a longer communication timeline. The delay costs you a week and the added friction makes every subsequent message slower to confirm.',
+          effects: { heat: 8, funds: -35000 },
+          next: 'k3',
+        },
+      },
+    ],
+  },
+
+  k3: {
+    id: 'k3',
+    title: 'The KCIA Problem',
+    location: 'Seoul',
+    date: 'April 15, 1982',
+    setup: `South Korean Defense Intelligence Command Colonel BAEK has noticed unusual signals traffic originating near the JSA and has formally requested a liaison meeting with the US military command, citing unauthorized foreign intelligence activity in his jurisdiction. BAEK is methodical, well-connected, and not a man who accepts vague reassurances. He will keep asking until he gets answers.`,
+    choices: [
+      {
+        text: 'Brief BAEK on a strictly compartmented basis — give him just enough to buy his cooperation',
+        outcome: {
+          tier: 'messy',
+          text: 'BAEK accepts the partial briefing but is clearly dissatisfied. He assigns a DIC officer to monitor JSA movement independently. The officer is not hostile, but he is watching — and anything irregular will reach BAEK the same day it happens.',
+          effects: { heat: -3, funds: -50000 },
+          next: 'k4',
+        },
+      },
+      {
+        text: 'Deny everything and route around BAEK through US military channels',
+        outcome: {
+          tier: 'burned',
+          text: 'BAEK escalates. He contacts the CIA station chief directly and threatens to file a formal diplomatic complaint. The station chief quietly reads you in on the problem: BAEK now knows someone is lying to him, and he has resources to find out who.',
+          effects: { heat: 15, funds: -10000 },
+          next: 'k4',
+        },
+      },
+      {
+        text: 'Bring BAEK fully into the operation — his KCIA access and local networks are an asset',
+        outcome: {
+          tier: 'clean',
+          text: 'BAEK is sharper than expected and immediately useful. He has an existing asset network in the JSA administrative structure and — more importantly — intelligence on Bowibu surveillance patterns along the MDL that no Western agency has access to.',
+          effects: { heat: -8, funds: -40000 },
+          next: 'k4b',
+        },
+      },
+      {
+        text: 'Feed BAEK a plausible decoy — let him monitor a false operation while you run the real one',
+        outcome: {
+          tier: 'burned',
+          text: 'The decoy holds for ten days before BAEK identifies the inconsistencies. He does not confront you directly — he simply goes silent and begins running his own parallel inquiry. You now have an unknown quantity operating in your operational space.',
+          effects: { heat: 10, funds: -30000 },
+          next: 'k4',
+        },
+      },
+    ],
+  },
+
+  k4: {
+    id: 'k4',
+    title: 'The Soviet Thread',
+    location: 'Seoul',
+    date: 'April 23, 1982',
+    setup: `NSA SIGINT intercepts indicate the GRU has quietly recalled its senior technical advisors from Pyongyang for consultations. Soviet signals traffic shows awareness of a leak within the DPRK scientific directorate — not LOTUS by name, but the category of breach is described accurately. Bowibu may act before the May session if they narrow the field. The window could close early.`,
+    choices: [
+      {
+        text: 'Accelerate — push LOTUS to cross at the earliest possible armistice session before Bowibu moves',
+        outcome: {
+          tier: 'burned',
+          text: 'You push the timeline forward two weeks. LOTUS is not ready and the preparation is incomplete. He crosses early but without the full documentation package — only partial schematics. The intelligence value is real but reduced, and the rushed movement leaves traces.',
+          effects: { heat: 20, funds: -50000 },
+          next: 'k5',
+        },
+      },
+      {
+        text: 'Establish a secondary extraction route via the Yellow Sea as insurance if the JSA window closes',
+        outcome: {
+          tier: 'messy',
+          text: 'NIGHTHAWK makes contact with a South Korean fishing cooperative operating near the NLL. The route is viable but expensive and requires LOTUS to travel overland to the Wonsan coast — a significant additional risk that he is not comfortable with.',
+          effects: { heat: 10, funds: -80000 },
+          next: 'k5',
+        },
+      },
+      {
+        text: 'Have GHOST intercept a GRU courier and plant disinformation pointing suspicion at a different DPRK scientist',
+        outcome: {
+          tier: 'clean',
+          text: "GHOST lifts a document from a GRU liaison officer's case during a transit stopover in Tokyo and inserts a fabricated internal security flag against a senior DPRK metallurgist in Hamhung. Moscow's suspicion redirects north. LOTUS drops off the internal watchlist.",
+          effects: { heat: 5, funds: -60000 },
+          next: 'k5',
+        },
+      },
+    ],
+  },
+
+  k4b: {
+    id: 'k4b',
+    title: 'The Korean Asset',
+    location: 'Seoul',
+    date: 'April 23, 1982',
+    setup: `BAEK has delivered more than expected. Through a long-running KCIA penetration of the DPRK military liaison structure, he has access to Captain SHIN — a DPRK People's Army officer assigned to the armistice commission who has been quietly disillusioned for three years. SHIN can personally escort LOTUS to the commission building during the session, providing cover that Bowibu would have no reason to question.`,
+    choices: [
+      {
+        text: "Accept KCIA's operational lead — SHIN escorts LOTUS, BAEK coordinates the crossing phase",
+        outcome: {
+          tier: 'clean',
+          text: "SHIN's involvement is precisely calibrated. He meets LOTUS at the DPRK delegation building and walks him to the commission chamber under the guise of a document delivery. BAEK's team provides overwatch on the Southern side. The choreography is clean.",
+          effects: { heat: 5, funds: -70000 },
+          next: 'k5',
+        },
+      },
+      {
+        text: "Take BAEK's intelligence on Bowibu surveillance positions but run the crossing independently",
+        outcome: {
+          tier: 'messy',
+          text: "BAEK provides the surveillance map reluctantly. Without SHIN's cover, LOTUS must navigate the commission building on his own recognisance. The map helps — two Bowibu watchers are avoided — but the crossing is more exposed than it needed to be.",
+          effects: { heat: 12, funds: -40000 },
+          next: 'k5',
+        },
+      },
+    ],
+  },
+
+  k5: {
+    id: 'k5',
+    title: 'Panmunjom',
+    location: 'Joint Security Area',
+    date: 'May 4, 1982',
+    setup: `The armistice commission session begins in two hours. LOTUS is in the DPRK delegation building with the documentation concealed in a false-bottomed document case. The plan: during the lunch recess, he walks to the commission chamber on a pretext and steps across the Military Demarcation Line. Three complications have emerged since morning — a DPRK guard has changed his patrol route without notice, a Soviet military observer will be present throughout the session, and Bowibu Director RYOM has arrived in Pyongyang unannounced.`,
+    choices: [
+      {
+        text: 'Execute as planned — LOTUS crosses during the lunch recess',
+        outcome: {
+          tier: 'messy',
+          text: 'The crossing happens. The changed patrol route forces LOTUS to wait eight minutes longer than planned in a corridor where he is visible. He makes it across, documents intact, but the Soviet observer clocks the movement and files a note. Bowibu will know within the week.',
+          effects: { heat: 15, funds: -20000 },
+          next: 'kend',
+        },
+      },
+      {
+        text: 'NIGHTHAWK coordinates a brief administrative hold on the session to give LOTUS more time',
+        outcome: {
+          tier: 'clean',
+          text: 'A procedural dispute over the session transcript — triggered by NIGHTHAWK through a sympathetic UN Command staff officer — delays the afternoon session by 22 minutes. The changed patrol route is no longer a problem. LOTUS crosses cleanly during the extended recess.',
+          effects: { heat: 8, funds: -35000 },
+          next: 'kend',
+        },
+      },
+      {
+        text: 'Abort the JSA crossing — RYOM\'s arrival changes the calculation, pull back to the Yellow Sea route',
+        outcome: {
+          tier: 'burned',
+          text: "LOTUS is pulled out of the delegation building on a fabricated medical pretext. The Yellow Sea route is activated but LOTUS must travel overland to the coast — a 14-hour window during which he is entirely on his own. He makes it to the fishing vessel, but the overland movement is captured on a Bowibu checkpoint log that won't be reviewed until tomorrow.",
+          effects: { heat: 25, funds: -120000 },
+          next: 'kend',
+        },
+      },
+    ],
+  },
+
+  kend: {
+    id: 'kend',
+    title: 'Debrief',
+    location: 'Osan Air Base',
+    date: 'May 5, 1982',
+    setup: `LOTUS is out. He is currently in a secure room at Osan Air Base, working through his documentation with two NSA analysts. Initial assessment: North Korea is further from an operational device than feared — 36 to 48 months, not 18. But the Soviet advisory relationship is deeper and more technically specific than any Western agency understood. The intelligence is significant. Now your team needs to disappear before Bowibu assets, already operating in Seoul under diplomatic cover, identify them.`,
+    choices: [
+      {
+        text: 'Standard exfil — all three agents depart via separate commercial routes on clean cover legends',
+        outcome: {
+          tier: 'clean',
+          text: 'NIGHTHAWK flies Seoul to Tokyo on a Canadian business legend, then Vancouver. CIPHER takes the train to Busan and boards a container ship to Yokohama. GHOST departs through Gimpo on a West German press credential. By the following evening, all three are beyond reach. The operation is closed.',
+          effects: { heat: 0, funds: -40000 },
+          next: 'WIN',
+        },
+      },
+    ],
+  },
 }

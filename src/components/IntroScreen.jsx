@@ -1,24 +1,6 @@
 import { useEffect, useState } from 'react'
 
-const AGENTS = [
-  {
-    name: 'NIGHTHAWK',
-    role: 'Infiltration',
-    desc: 'Your ghost. Surveillance, entry, physical presence on the ground. When something needs to happen quietly in a place you shouldn\'t be, NIGHTHAWK goes in.',
-  },
-  {
-    name: 'CIPHER',
-    role: 'Intelligence',
-    desc: 'Your analyst and field handler. Dead drops, document retrieval, human contact. CIPHER turns information into leverage.',
-  },
-  {
-    name: 'GHOST',
-    role: 'Elimination',
-    desc: 'Your last resort. When a threat cannot be avoided or outmaneuvered, GHOST removes it. Precise, costly, and not without consequences.',
-  },
-]
-
-export default function IntroScreen({ onStart, onResume, hasSave }) {
+export default function IntroScreen({ operation, onStart, onResume, hasSave }) {
   const [visible, setVisible] = useState(false)
   const [confirmNew, setConfirmNew] = useState(false)
 
@@ -35,19 +17,17 @@ export default function IntroScreen({ onStart, onResume, hasSave }) {
     }
   }
 
+  const b = operation.briefing
+
   return (
     <div className={`full-screen intro-screen fade-up ${visible ? 'visible' : ''}`}>
       <div className="intro-card">
-        <div className="end-classification">OPERATION SHADOW BROKER — EYES ONLY</div>
+        <div className="end-classification">{b.classification}</div>
 
-        <h1 className="intro-title">SHADOW BROKER</h1>
-        <p className="intro-date">Vienna Station, October 1977</p>
+        <h1 className="intro-title">{b.title}</h1>
+        <p className="intro-date">{b.date}</p>
 
-        <p className="intro-body">
-          A Soviet nuclear physicist wants to defect. His knowledge is invaluable.
-          The KGB will stop at nothing to bring him back — or silence him.
-          You are the handler. Every decision is yours.
-        </p>
+        <p className="intro-body">{b.body}</p>
 
         <div className="intro-mechanics">
           <div className="mechanic">
@@ -56,7 +36,7 @@ export default function IntroScreen({ onStart, onResume, hasSave }) {
           </div>
           <div className="mechanic">
             <span className="mechanic-label">HEAT</span>
-            <span className="mechanic-desc">KGB attention. Reaches 100 and the operation is burned.</span>
+            <span className="mechanic-desc">Enemy attention. Reaches 100 and the operation is burned.</span>
           </div>
           <div className="mechanic">
             <span className="mechanic-label">AGENTS</span>
@@ -66,7 +46,7 @@ export default function IntroScreen({ onStart, onResume, hasSave }) {
 
         <div className="intro-agents">
           <div className="intro-agents-label">YOUR FIELD ASSETS</div>
-          {AGENTS.map(agent => (
+          {b.agents.map(agent => (
             <div key={agent.name} className="intro-agent">
               <div className="intro-agent-header">
                 <span className="intro-agent-dot" />
