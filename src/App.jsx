@@ -5,8 +5,32 @@ import ScenarioCard from './components/ScenarioCard'
 import WinScreen from './components/WinScreen'
 import LoseScreen from './components/LoseScreen'
 import IntroScreen from './components/IntroScreen'
+import HomeScreen from './components/HomeScreen'
+import OnboardingScreen from './components/OnboardingScreen'
+import { computeScore } from './utils/scoring'
 
 const SAVE_KEY = 'shadow-broker-save'
+const PROFILE_KEY = 'shadow-broker-profile'
+
+const GRADE_ORDER = { D: 0, C: 1, B: 2, A: 3, S: 4 }
+function betterGrade(a, b) {
+  if (!a) return b
+  if (!b) return a
+  return GRADE_ORDER[a] >= GRADE_ORDER[b] ? a : b
+}
+
+function loadProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch {
+    return null
+  }
+}
+
+function saveProfile(profile) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile))
+}
 
 const INITIAL_STATE = {
   funds: 400000,
@@ -18,11 +42,11 @@ const INITIAL_STATE = {
   },
   volkovAlive: true,
   scenarioId: 's1',
-  phase: 'intro', // intro | playing | outcome | win | lose | abort-confirm
-  pendingOutcome: null, // { tier, text, effects, next }
+  phase: 'home', // home | intro | playing | outcome | win | lose | abort-confirm
+  pendingOutcome: null,
   loseReason: null,
-  history: [], // track visited scenario ids for stats
-  preAbortPhase: null, // stores phase before abort-confirm
+  history: [],
+  preAbortPhase: null,
 }
 
 function applyEffects(state, effects) {
@@ -75,10 +99,12 @@ function clearSave() {
 export default function App() {
   const [state, setState] = useState(INITIAL_STATE)
   const [hasSave, setHasSave] = useState(() => !!localStorage.getItem(SAVE_KEY))
+  const [profile, setProfile] = useState(() => loadProfile())
 
-  // Auto-save on every state change (skip intro/abort-confirm phases)
+  // Auto-save on every state change (skip non-game phases)
   useEffect(() => {
-    if (state.phase !== 'intro' && state.phase !== 'abort-confirm') {
+    const skipPhases = ['home', 'intro', 'abort-confirm']
+    if (!skipPhases.includes(state.phase)) {
       localStorage.setItem(SAVE_KEY, JSON.stringify(state))
     }
   }, [state])
@@ -86,6 +112,50 @@ export default function App() {
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [state.scenarioId, state.phase])
+
+  // Update profile stats and clear save on win/lose
+  useEffect(() => {
+    if (state.phase === 'win' || state.phase === 'lose') {
+      clearSave()
+      setHasSave(false)
+      setProfile(prev => {
+        if (!prev) return prev
+        const score = computeScore(state)
+        const won = state.phase === 'win'
+        const updated = {
+          ...prev,
+          stats: {
+            missionsCompleted: prev.stats.missionsCompleted + (won ? 1 : 0),
+            missionsAttempted: prev.stats.missionsAttempted + 1,
+            bestGrade: betterGrade(prev.stats.bestGrade, score.grade),
+            totalScore: prev.stats.totalScore + score.total,
+          },
+        }
+        saveProfile(updated)
+        return updated
+      })
+    }
+  }, [state.phase])
+
+  const handleCreateProfile = useCallback((callsign) => {
+    const newProfile = {
+      callsign,
+      stats: { missionsCompleted: 0, missionsAttempted: 0, bestGrade: null, totalScore: 0 },
+    }
+    saveProfile(newProfile)
+    setProfile(newProfile)
+    // Stay on 'home' phase — profile is now set so HomeScreen renders
+  }, [])
+
+  const handleChangeProfile = useCallback(() => {
+    localStorage.removeItem(PROFILE_KEY)
+    setProfile(null)
+    setState(INITIAL_STATE)
+  }, [])
+
+  const handleNewOperation = useCallback(() => {
+    setState(s => ({ ...s, phase: 'intro' }))
+  }, [])
 
   const handleChoice = useCallback((choiceIndex) => {
     const scenario = scenarios[state.scenarioId]
@@ -165,18 +235,26 @@ export default function App() {
   }, [])
 
   const handleAbortConfirm = useCallback(() => {
-    // Save remains in localStorage so player can resume; just go back to intro
     setHasSave(true)
     setState(INITIAL_STATE)
   }, [])
 
-  // Win and lose clear the save
-  useEffect(() => {
-    if (state.phase === 'win' || state.phase === 'lose') {
-      clearSave()
-      setHasSave(false)
+  // ── Render ───────────────────────────────────────────────
+
+  if (state.phase === 'home') {
+    if (!profile) {
+      return <OnboardingScreen onComplete={handleCreateProfile} />
     }
-  }, [state.phase])
+    return (
+      <HomeScreen
+        profile={profile}
+        hasSave={hasSave}
+        onNewOperation={handleNewOperation}
+        onResume={handleResume}
+        onChangeProfile={handleChangeProfile}
+      />
+    )
+  }
 
   if (state.phase === 'intro') {
     return (
