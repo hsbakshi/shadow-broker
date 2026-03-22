@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#0f0e0d"/>
+  <!-- Outer ring -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#c4a882" stroke-width="8" opacity="0.4"/>
+  <!-- Inner ring -->
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#c4a882" stroke-width="3" opacity="0.25"/>
+  <!-- Cross hairs -->
+  <line x1="256" y1="56" x2="256" y2="136" stroke="#c4a882" stroke-width="6" opacity="0.5"/>
+  <line x1="256" y1="376" x2="256" y2="456" stroke="#c4a882" stroke-width="6" opacity="0.5"/>
+  <line x1="56" y1="256" x2="136" y2="256" stroke="#c4a882" stroke-width="6" opacity="0.5"/>
+  <line x1="376" y1="256" x2="456" y2="256" stroke="#c4a882" stroke-width="6" opacity="0.5"/>
+  <!-- Central dot -->
+  <circle cx="256" cy="256" r="14" fill="#c4a882"/>
+  <!-- S B letters -->
+  <text x="256" y="295" font-family="Georgia, serif" font-size="100" font-weight="700" fill="#c4a882" text-anchor="middle" letter-spacing="-4">SB</text>
+</svg>
