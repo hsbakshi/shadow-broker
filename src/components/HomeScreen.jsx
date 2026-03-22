@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react'
+import { operations } from '../data/operations'
 
 const GRADE_COLORS = { S: '#a78bfa', A: '#4ade80', B: '#c4a882', C: '#fbbf24', D: '#ef4444' }
 
+const DIFFICULTY_LABELS = { 1: 'Routine', 2: 'Low', 3: 'Moderate', 4: 'High', 5: 'Critical' }
+
 export default function HomeScreen({ profile, hasSave, onNewOperation, onResume, onChangeProfile }) {
   const [visible, setVisible] = useState(false)
+  const [selectedOpId, setSelectedOpId] = useState(Object.keys(operations)[0])
 
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 80)
@@ -11,6 +15,7 @@ export default function HomeScreen({ profile, hasSave, onNewOperation, onResume,
   }, [])
 
   const { callsign, stats } = profile
+  const opList = Object.values(operations)
 
   return (
     <div className={`full-screen home-screen fade-up ${visible ? 'visible' : ''}`}>
@@ -28,12 +33,12 @@ export default function HomeScreen({ profile, hasSave, onNewOperation, onResume,
 
         <div className="home-stats">
           <div className="home-stat">
-            <span className="home-stat-value">{stats.missionsCompleted}</span>
-            <span className="home-stat-label">
+            <span className="home-stat-value">
               {stats.missionsAttempted > 0
-                ? `${stats.missionsCompleted} / ${stats.missionsAttempted} COMPLETED`
-                : 'MISSIONS COMPLETED'}
+                ? `${stats.missionsCompleted}/${stats.missionsAttempted}`
+                : '0'}
             </span>
+            <span className="home-stat-label">COMPLETED</span>
           </div>
           <div className="home-stat">
             {stats.bestGrade ? (
@@ -56,14 +61,37 @@ export default function HomeScreen({ profile, hasSave, onNewOperation, onResume,
           </div>
         </div>
 
+        <div className="mission-select">
+          <div className="mission-select-label">SELECT OPERATION</div>
+          <div className="mission-cards">
+            {opList.map(op => (
+              <button
+                key={op.id}
+                className={`mission-card ${selectedOpId === op.id ? 'mission-card-active' : ''}`}
+                onClick={() => setSelectedOpId(op.id)}
+              >
+                <div className="mc-header">
+                  <span className="mc-title">{op.title}</span>
+                  <span className="mc-difficulty" data-level={op.difficulty}>
+                    {DIFFICULTY_LABELS[op.difficulty]}
+                  </span>
+                </div>
+                <span className="mc-subtitle">{op.subtitle}</span>
+                <span className="mc-desc">{op.description}</span>
+                <span className="mc-meta">{op.estimatedLength}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div className="home-actions">
           {hasSave && (
             <button className="begin-btn resume-btn" onClick={onResume}>
               Resume Operation
             </button>
           )}
-          <button className="begin-btn" onClick={onNewOperation}>
-            New Operation
+          <button className="begin-btn" onClick={() => onNewOperation(selectedOpId)}>
+            Start Operation
           </button>
         </div>
 

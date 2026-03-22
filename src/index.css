@@ -471,6 +471,103 @@ html, body {
   color: var(--text-muted);
 }
 
+/* ── Mission Selection ─────────────────────────────────── */
+
+.mission-select {
+  margin-bottom: 1.5rem;
+}
+
+.mission-select-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.mission-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mission-card {
+  width: 100%;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  font-family: inherit;
+}
+
+.mission-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-light);
+}
+
+.mission-card-active {
+  background: rgba(196, 168, 130, 0.06);
+  border-color: var(--accent-dim);
+}
+
+.mission-card-active:hover {
+  background: rgba(196, 168, 130, 0.09);
+}
+
+.mc-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.mc-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.mc-difficulty {
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.mc-difficulty[data-level="1"] { color: var(--heat-green); }
+.mc-difficulty[data-level="2"] { color: var(--heat-green); }
+.mc-difficulty[data-level="3"] { color: var(--heat-amber); }
+.mc-difficulty[data-level="4"] { color: var(--heat-red); }
+.mc-difficulty[data-level="5"] { color: var(--heat-red); }
+
+.mc-subtitle {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+
+.mc-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: 0.1rem;
+}
+
+.mc-meta {
+  font-size: 0.58rem;
+  color: var(--text-faint);
+  letter-spacing: 0.06em;
+  margin-top: 0.2rem;
+}
+
 /* ── Onboarding Screen ─────────────────────────────────── */
 
 .onboarding-screen {
